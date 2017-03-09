@@ -1,0 +1,14 @@
+{
+    "defaultdb": {
+        "host": "localhost",
+        "port": 27017
+    },
+    "server1": {
+        "host": "localhost",
+        "port": 27017
+    },
+    "server2": {
+        "host": "localhost",
+        "port": 27017
+    }
+}
