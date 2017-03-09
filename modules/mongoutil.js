@@ -71,34 +71,30 @@ __mongoutil.act = function () {
     var dbconfig = __appsetting.getItem(configKey);
     if (!dbconfig) {
         __cb(new Error('dbconfig not exist'), undefined, undefined, callback);
-        return;
     }
-    if (!dbconfig.host) {
+    else if (!dbconfig.host) {
         __cb(new Error('dbconfig host error'), undefined, undefined, callback);
-        return;
     }
+    else {
+        var conn_str = 'mongodb://' + dbconfig.host + ':' + (dbconfig.port || 27017) + '/' + _curDbName;
+        MongoClient.connect(conn_str, {}, function (connerr, db) {
+            if (connerr) {
+                __cb(connerr, undefined, undefined, callback);
+            }
+            else if (!db) {
+                __cb(new Error('db ' + _curDbName + ' error'), undefined, undefined, callback);
+            }
+            else if (!_curColName || _curColName.length == 0) {
+                __cb(err, db, undefined, callback);
+            }
+            else {
+                db.collection(_curColName, function (err, col) {
+                    __cb(err, db, col, callback);
+                })
+            }
 
-    var conn_str = 'mongodb://' + dbconfig.host + ':' + (dbconfig.port || 27017) + '/' + _curDbName;
-    MongoClient.connect(conn_str, {}, function (connerr, db) {
-        if (connerr) {
-            __cb(connerr, undefined, undefined, callback);
-            return;
-        }
-        else if (!db) {
-            __cb(new Error('db ' + _curDbName + ' error'), undefined, undefined, callback);
-            return;
-        }
-        else if (!_curColName || _curColName.length == 0) {
-            __cb(err, db, undefined, callback);
-            return;
-        }
-        else {
-            db.collection(_curColName, function (err, col) {
-                __cb(err, db, col, callback);
-            })
-        }
-
-    })
+        })
+    }
 
 }
 __mongoutil.close = function (db) {

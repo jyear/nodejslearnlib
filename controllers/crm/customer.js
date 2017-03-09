@@ -1,7 +1,8 @@
 ﻿var express = require('express');
 var router = express.Router();
 
-var mongo = require('../../modules/mongoutil.js');
+var mongo = require('../../modules/mongoutil');
+var httputil = require('../../modules/httputil');
 
 /* GET home page. */
 router.get('/getDetails', function (req, res) {
@@ -9,18 +10,24 @@ router.get('/getDetails', function (req, res) {
     mongo.act('crm.customer', 'server1', function (err, db, col) {
 
         if (err) {
-            console.log(err);
+            httputil.err(err, res);
             mongo.close(db);
         }
         else {
-            col.findOne({ _id: mongo.objid.fromString(req.query.id) }, function (err, item) {
+
+            var filter = {
+                _id: mongo.objid.fromString(req.query.id)
+            };
+
+            col.findOne(filter, function (err, item) {
                 if (err) {
-                    console.log(err);
+                    httputil.err(err, res);
                 } else {
                     res.json(item);
                 }
                 mongo.close(db);
             });
+            
         }
 
     });

@@ -10,5 +10,8 @@
     "server2": {
         "host": "localhost",
         "port": 27017
+    },
+    "env": {
+        "dev": true
     }
 }
