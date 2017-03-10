@@ -1,12 +1,13 @@
 var path = require('path');
+var log4js = require("log4js");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var log4js = require("log4js");
-var express = require('express');
-var app = express();
-
 var httputil = require('./modules/httputil');
 var appsetting = require('./modules/appsetting');
+
+//create app object
+var express = require('express');
+var app = express();
 
 var init = function () {
 
@@ -16,11 +17,11 @@ var init = function () {
         for (var k in env) process.env[k] = env[k];
     }
 
-
     //global ver
     app.set('approot', __dirname);
     app.set('controller', 'controllers');
     app.set('jsonp callback name', '_cb');
+    app.set('port', process.env.PORT || 3000);
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'jade');
 
@@ -29,16 +30,13 @@ var init = function () {
     app.use(cookieParser());
 
     // setRoutes
-    require('./modules/rotues.js')(app);
+    require('./modules/rotues.js')(app).setRoutes();
 
     // setErrorHandler
     errorHandler(app);
 
     //log configure
     //logSetting(app);
-
-    // setPort
-    app.set('port', process.env.PORT || 3000);
 
     //boot server
     var server = app.listen(app.get('port'), function () {
@@ -54,10 +52,8 @@ var errorHandler = function (app) {
         err.status = 404;
         next(err);
     });
-
     app.use(function (err, req, res, next) {
         httputil.err(err, res);
-        next();
     });
 }
 
@@ -70,7 +66,10 @@ var logSetting = function (app) {
         ]
     });
 
-    app.use(log4js.connectLogger(log4js.getLogger("cheese"), { level: log4js.levels.INFO }));
+    app.use(log4js.connectLogger(
+        log4js.getLogger("cheese"),
+        { level: log4js.levels.INFO }
+    ));
 
 }
 

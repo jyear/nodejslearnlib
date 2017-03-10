@@ -1,76 +1,76 @@
 ﻿var fs = require('fs');
 var path = require('path');
+var spr = path.sep,
+    _app,
+    _approot,
+    _controller,
+    _replacefolder,
+    _exports = {};
 
-var setRoutes = function (app, curPath, curfolder) {
+_exports.setRoutes = function (curPath, curfolder) {
 
-    if (!app)
+    curPath = curPath || _approot;
+    curfolder = curfolder || _controller;
+
+    if (!_app)
         return;
-
-    curPath = curPath || app.get('approot');
-    curfolder = curfolder || app.get('controller');
-
     if (!curPath || curPath.length == 0)
         return;
     if (!curfolder || curfolder.length == 0)
         return;
 
     var fullPath = path.join(curPath, curfolder);
-    var results = fs.readdirSync(fullPath);
-    var f, states;
-
-    for (var i in results) {
-
-        f = results[i];
-        states = fs.statSync(fullPath + '\\' + f);
-
+    fs.readdirSync(fullPath).forEach((f) => {
+        let states = fs.statSync(fullPath + spr + f);
         if (states.isDirectory()) {
-            setRoutes(app, fullPath, f);
+            _exports.setRoutes(fullPath, f);
         } else {
-            setControllers(app, fullPath, f);
+            _exports.setControllers(fullPath, f);
         }
-
-    }
-
+    })
 }
 
-var setControllers = (function () {
+_exports.setControllers = (function () {
 
-    var reg = /\/index$/gi;
+    var reg = /\\/g;
     var dotjs = '.js';
     var emptystr = '';
 
-    return function (app, fullPath, f) {
+    return function (fullPath, filename) {
 
-        var controller = app.get('controller');
-        var tmp_arr = fullPath.split('\\' + controller);
+        var jsfile = path.join(fullPath, filename);
+        var handler = require(jsfile);
+        var urlpath = jsfile
+            .replace(_replacefolder, emptystr)
+            .replace(dotjs, emptystr)
+            .replace(reg, '/')
+            .toLowerCase();
+        var controllerName = filename
+            .replace(dotjs, emptystr)
+            .toLowerCase();
 
-        var path;
-        if (tmp_arr.length == 1)
-            path = '/';
-        else
-            path = tmp_arr[1].replace("\\", '/') + '/';
-
-        path = (path + f.replace(dotjs, emptystr)).toLowerCase();
-
-        var h = require(fullPath + "\\" + f);
-        app.use(path, h);
-        //console.log(path);
-
-        if (path == '/index') {
-
-            app.use('/', h);
-            //console.log('/');
-
-        } else if (reg.test(path)) {
-
-            path = path.replace(reg, '');
-            app.use(path, h);
-            //console.log(path);
-
+        var urlpatharr = [urlpath];
+        if (controllerName == 'index') {
+            urlpatharr.push(urlpath.substring(0, urlpath.lastIndexOf('/')));
         }
+
+        urlpatharr.forEach((urlpath) => {
+            //console.log(`jsfile:${jsfile} path:${urlpath},controllerName:${controllerName}`);
+            _app.use(urlpath, handler);
+        });
 
     }
 
 })()
 
-module.exports = setRoutes;
+module.exports = function (app, controller, approot) {
+
+    _app = app;
+    if (_app) {
+        _approot = app.get('approot');
+        _controller = app.get('controller');
+        _replacefolder = path.join(_approot, _controller);
+    }
+    return _exports;
+
+};

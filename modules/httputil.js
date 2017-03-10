@@ -1,5 +1,4 @@
 var exp = {};
-
 exp.err = function (err, res) {
 
     if (!err)
@@ -19,6 +18,5 @@ exp.err = function (err, res) {
         console.log(err);
 
 }
-
 
 module.exports = exp;

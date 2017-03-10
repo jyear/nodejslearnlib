@@ -18,4 +18,7 @@ http://www.runoob.com/mongodb/mongodb-tutorial.html
 
 正则表达式
 http://www.runoob.com/regexp/regexp-tutorial.html
+
+ES6新特性概览
+http://www.cnblogs.com/Wayou/p/es6_new_features.html
  

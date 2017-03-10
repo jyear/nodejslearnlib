@@ -39,10 +39,14 @@ var buildConfigCache = function (globalConfigUrl) {
 
 var queryGlobalConfig = function (key, globalConfigUrl) {
 
-    if (typeof __globalConfigCache['lastAccessTime'] === 'undefined'
-        || typeof __globalConfigCache['configString'] === 'undefined'
-        || typeof __globalConfigCache['configObj'] === 'undefined') {
+    var lastAccessTime = __globalConfigCache['lastAccessTime'];
+    var configString = __globalConfigCache['configString'];
+    var configObj = __globalConfigCache['configObj'];
 
+
+    if (typeof lastAccessTime === 'undefined'
+        || typeof configString === 'undefined'
+        || typeof configObj === 'undefined') {
         buildConfigCache(globalConfigUrl);
     }
     else if ((new Date() - lastAccessTime) / 1000 > 300) {
