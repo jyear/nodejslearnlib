@@ -1,8 +1,9 @@
-﻿var express = require('express');
-var router = express.Router()
-module.exports = router;
+﻿module.exports = zx_action.init();
 
-
-router.get('/', function (req, res) {
+zx_action.create('/', function (req, res) {
     res.send(req.originalUrl);
+});
+
+zx_action.create('/getList', function (req, res) {
+    res.send('1');
 });

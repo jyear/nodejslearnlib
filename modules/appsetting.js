@@ -91,7 +91,11 @@ var initFromConfigJSON = function () {
     try {
         var s = fs.readFileSync(getConfigFile(), 'utf-8');
         if (s.length > 0) {
-            __projectconfig = process.__projectconfig = JSON.parse(s);
+            var c = JSON.parse(s);
+            if (c) {
+                c.lastReadFileTime = new Date();
+                __projectconfig = process.__projectconfig = c;
+            }
             return;
         }
 
@@ -109,7 +113,10 @@ module.exports = {
         if (!key || key.length == 0)
             return __emptyString;
 
-        if (!__projectconfig) {
+        //__projectconfig 如果为空或最后访问时间为空或最后访问大于60s就重新读取文件 
+        if (!__projectconfig
+            || typeof __projectconfig['lastReadFileTime'] == undefined
+            || (new Date() - __projectconfig['lastReadFileTime']) / 1000 > 60) {
             initFromConfigJSON();
         }
 

@@ -1,9 +1,9 @@
+require('./global');
+
 var path = require('path');
 var log4js = require("log4js");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var httputil = require('./modules/httputil');
-var appsetting = require('./modules/appsetting');
 
 //create app object
 var express = require('express');
@@ -12,10 +12,8 @@ var app = express();
 var init = function () {
 
     //env var
-    var env = appsetting.getItem('env');
-    if (env) {
-        for (var k in env) process.env[k] = env[k];
-    }
+    var env = zx_conf.getItem('env');
+    if (env) for (var k in env) process.env[k] = env[k];
 
     //global ver
     app.set('approot', __dirname);
@@ -53,7 +51,7 @@ var errorHandler = function (app) {
         next(err);
     });
     app.use(function (err, req, res, next) {
-        httputil.err(err, res);
+        zx_util.outErr(err, res);
     });
 }
 

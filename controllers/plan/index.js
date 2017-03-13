@@ -1,10 +1,9 @@
-﻿var express = require('express');
-var router = express.Router()
-module.exports = router;
+﻿module.exports = zx_action.init();
 
+zx_action.create('/', function (req, res) {
+    res.send(zx_conf.getItem('ZJWebUrl'))
+});
 
-var appsetting = require('../../modules/appsetting');
-
-router.get('/', function (req, res) {    
-    res.send(appsetting.getItem('ZJWebUrl'))
+zx_action.create('/getList', function (req, res) {
+    res.send(req.originalUrl);
 });

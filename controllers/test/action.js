@@ -1,9 +1,8 @@
-var action = require('../../modules/action');
-module.exports = action.router;
+module.exports = zx_action.init();
 
-action.create('/app', ['POST', 'GET'], function (req, res) {
+zx_action.create('/app', function (req, res) {
     res.send(req.app.get('approot'));
 });
-action.create('/htmls/:html', function (req, res) {
+zx_action.create('/htmls/:html', function (req, res) {
     res.send(req.params.html);
 });

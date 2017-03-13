@@ -1,7 +1,4 @@
-var express = require('express');
-var router = express.Router();
-var exp = { router: router };
-var maps = {};
+var exp = { count: 0, actions: {} };
 
 var actionhandler = function (cb) {
 
@@ -20,6 +17,11 @@ var actionhandler = function (cb) {
 
 }
 
+exp.init = function () {
+    exp = { count: 0, actions: {} }
+    return exp;
+}
+
 exp.create = function (path, methods, cb) {
 
     //path
@@ -30,7 +32,7 @@ exp.create = function (path, methods, cb) {
     var mtype = typeof methods;
     if (mtype == 'function') {
         cb = methods;
-        methods = ['get'];
+        methods = ['get', 'post'];
     }
     else if (mtype == 'string') {
         methods = [methods.toLowerCase()];
@@ -43,27 +45,8 @@ exp.create = function (path, methods, cb) {
 
     //cb
     if (typeof cb == 'function') {
-
-        methods.forEach((m) => {
-            switch (m) {
-                case 'get':
-                    router.get(path, actionhandler(cb));
-                    break;
-                case 'post':
-                    router.post(path, actionhandler(cb));
-                    break;
-                case 'delete':
-                    router.delete(path, actionhandler(cb));
-                    break;
-                case 'put':
-                    router.put(path, actionhandler(cb));
-                    break;
-                case 'head':
-                    router.head(path, actionhandler(cb));
-                    break;
-            }
-        })
-
+        exp.count += 1;
+        exp.actions[path] = { methods: methods, cb: actionhandler(cb) }
     }
 
 }

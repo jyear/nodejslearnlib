@@ -1,6 +1,6 @@
+require('./global');
+
 var path = require('path');
-var httputil = require('./modules/httputil');
-var appsetting = require('./modules/appsetting');
 
 //create app object
 var express = require('express');
@@ -22,7 +22,7 @@ var init = function () {
     })
 
     // setErrorHandler
-    errorHandler(app);
+    //errorHandler(app);
 
     app.set('port', process.env.PORT || 3000);
 
@@ -41,7 +41,7 @@ var errorHandler = function (app) {
         next(err);
     });
     app.use(function (err, req, res, next) {
-        httputil.err(err, res);
+        zx_util.outErr(err, res);
     });
 }
 

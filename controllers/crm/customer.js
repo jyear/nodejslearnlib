@@ -1,31 +1,27 @@
-﻿var express = require('express');
-var router = express.Router()
-module.exports = router;
+﻿module.exports = zx_action.init();
 
-var mongo = require('../../modules/mongoutil');
-
-router.get("/getList", function (req, res) {
+zx_action.create("/getList", function (req, res) {
 
     //分页
     //处理查询条件
     //实体映射
-    res.send('very good');
+    res.send('2');
 
 })
 
 
-router.get('/getDetails', function (req, res, next) {
+zx_action.create('/getDetails', function (req, res, next) {
 
-    mongo.act('crm.customer', 'server1', function (err, db, col) {
+    zx_mongo.act('crm.customer', 'server1', function (err, db, col) {
 
         if (err) {
             next(err);
-            mongo.close(db);
+            zx_mongo.close(db);
         }
         else {
 
             var filter = {
-                _id: mongo.objid.fromString(req.query.id)
+                _id: zx_mongo.objid.fromString(req.query.id)
             };
 
             col.findOne(filter, function (err, item) {
@@ -34,7 +30,7 @@ router.get('/getDetails', function (req, res, next) {
                 } else {
                     res.json(item);
                 }
-                mongo.close(db);
+                zx_mongo.close(db);
             });
 
         }

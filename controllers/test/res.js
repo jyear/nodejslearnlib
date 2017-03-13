@@ -1,16 +1,14 @@
-var express = require('express');
-var router = express.Router();
-module.exports = router;
+module.exports = zx_action.init();
 
-router.get('/app', function (req, res) {
+zx_action.create('/app', function (req, res) {
     res.send(req.app.get('approot'));
 });
 
-router.get('/redirect', function (req, res) {
+zx_action.create('/redirect', function (req, res) {
     res.redirect(301, 'http://www.qq.com');
 })
 
-router.get('/json', function (req, res) {
+zx_action.create('/json', function (req, res) {
     res.json({
         value: {
             key1: 1,
@@ -19,7 +17,7 @@ router.get('/json', function (req, res) {
     })
 });
 
-router.get('/jsonp', function (req, res) {
+zx_action.create('/jsonp', function (req, res) {
     res.jsonp({
         value: {
             key1: 1,
@@ -28,7 +26,6 @@ router.get('/jsonp', function (req, res) {
     })
 });
 
-router.get('/param/:name', function (req, res) {
+zx_action.create('/param/:name', function (req, res) {
     res.send(req.params.name);
 });
-
